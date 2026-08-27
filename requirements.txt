@@ -1,0 +1,9 @@
+moviepy==1.0.3
+numpy<2.0.0
+Pillow
+edge-tts
+newspaper3k
+google-genai
+requests
+python-dotenv
+lxml_html_clean

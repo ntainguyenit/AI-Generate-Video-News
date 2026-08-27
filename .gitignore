@@ -1,0 +1,4 @@
+.env
+.env.*
+session_cache.json
+tmp_assets/
