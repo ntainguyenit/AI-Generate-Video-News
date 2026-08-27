@@ -2,3 +2,8 @@
 .env.*
 session_cache.json
 tmp_assets/
+
+__pycache__/
+*.mp4
+*.mp3
+!bgm/
