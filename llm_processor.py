@@ -8,14 +8,14 @@ load_dotenv()
 
 def generate_video_script(article_text):
     """
-    Sử dụng Gemini API để tóm tắt bài báo và chia thành các phân cảnh, kèm theo Caption đăng mxh.
-    Trả về tuple: (category, key_points, danh sách scenes, reels_caption)
+    Use Gemini API to summarize the article and divide it into scenes, along with a social media caption.
+    Returns a tuple: (category, key_points, scenes list, reels_caption)
     """
-    print("[*] Đang tạo kịch bản video bằng Gemini API...")
+    print("Generating video script using Gemini API...")
     
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        print("[-] Lỗi: Không tìm thấy GEMINI_API_KEY trong biến môi trường.")
+        print("Error: GEMINI_API_KEY not found in environment variables.")
         return None
 
     try:
@@ -23,39 +23,39 @@ def generate_video_script(article_text):
         client = genai.Client(api_key=api_key)
         
         prompt = f"""
-Bạn là một biên tập viên video chuyên nghiệp. Hãy tóm tắt nội dung bài báo sau thành một kịch bản video (Reels/Shorts/TikTok) thời lượng khoảng 60-90 giây.
-Chia kịch bản thành 5-7 phân cảnh nhỏ (scenes). Mỗi phân cảnh chứa một câu thoại DÀI và CHI TIẾT (khoảng 3-4 câu hoàn chỉnh, cung cấp thông tin sâu) để giữ chân người xem và kéo dài video. Kèm theo đó là một từ khóa (prompt tiếng Anh ngắn) để tìm hoặc tạo ảnh minh họa tương ứng.
-Đồng thời xác định chuyên mục (category) của bài báo (ngắn gọn tối đa 3 từ, ví dụ: "Tin Công Nghệ", "Thể Thao", "Kinh Tế").
-Ngoài ra, trích xuất 3-4 ý chính (key_points) quan trọng nhất của bài báo để hiển thị trên màn hình.
-Đồng thời, viết một đoạn caption để đăng Reels/TikTok (reels_caption) dựa trên nội dung bài báo. Cấu trúc caption phải bao gồm:
-1. TIÊU ĐỀ (Viết IN HOA, giật tít thu hút).
-2. Nội dung chính (Tóm tắt hấp dẫn, chia đoạn dễ nhìn).
-3. Lời kêu gọi hành động (CTA) phù hợp với nội dung.
-4. Gợi ý Hashtag dễ trending, bắt buộc phải có #tnstudio ở cuối cùng.
-Vui lòng gộp chung caption này thành một chuỗi (string) duy nhất có chứa ký tự xuống dòng (\n).
+You are a professional video editor. Summarize the following article into a video script (Reels/Shorts/TikTok) with a duration of about 60-90 seconds.
+Divide the script into 5-7 short scenes. Each scene must contain a LONG and DETAILED dialogue sentence (about 3-4 complete sentences, providing in-depth information) to retain viewers and extend the video length. Include a short English image_prompt for each scene to search for or generate corresponding illustration images.
+Also, identify the category of the article (short, max 3 words, e.g., "Technology", "Sports", "Economy").
+Extract the 3-4 most important key_points of the article to display on the screen.
+Write a caption for Reels/TikTok (reels_caption) based on the article content. The caption structure must include:
+1. TITLE (UPPERCASE, clickbait/attractive).
+2. Main content (Engaging summary, spaced into readable paragraphs).
+3. Call to Action (CTA) suitable for the content.
+4. Trending hashtag suggestions, must include #tnstudio at the very end.
+Combine this caption into a single string containing newline characters (\n).
 
-Yêu cầu định dạng đầu ra chỉ là mã JSON có cấu trúc như sau (không kèm theo văn bản khác):
+The output format requirement is strictly structured JSON code as follows (no other text included):
 {{
-  "category": "Tên chuyên mục",
+  "category": "Category name",
   "key_points": [
-    "Ý chính 1",
-    "Ý chính 2",
-    "Ý chính 3"
+    "Key point 1",
+    "Key point 2",
+    "Key point 3"
   ],
   "scenes": [
     {{
-      "text": "Câu thoại phân cảnh 1",
+      "text": "Dialogue for scene 1",
       "image_prompt": "Image prompt for scene 1"
     }},
     {{
-      "text": "Câu thoại phân cảnh 2",
+      "text": "Dialogue for scene 2",
       "image_prompt": "Image prompt for scene 2"
     }}
   ],
-  "reels_caption": "Nội dung caption mẫu..."
+  "reels_caption": "Sample caption content..."
 }}
 
-Nội dung bài báo:
+Article content:
 {article_text}
 """
         # Call gemini-3.6-flash which is fast and supports JSON schema
@@ -68,16 +68,16 @@ Nội dung bài báo:
         )
         
         script_data = json.loads(response.text)
-        print("[+] Tạo kịch bản và caption thành công.")
-        category = script_data.get("category", "Tin Tức")
+        print("Script and caption generated successfully.")
+        category = script_data.get("category", "News")
         key_points = script_data.get("key_points", [])
         scenes = script_data.get("scenes", [])
         reels_caption = script_data.get("reels_caption", "")
         return category, key_points, scenes, reels_caption
         
     except Exception as e:
-        print(f"[-] Lỗi khi gọi Gemini API: {e}")
-        return "Tin Tức", [], None, ""
+        print(f"Error calling Gemini API: {e}")
+        return "News", [], None, ""
 
 if __name__ == "__main__":
     test_text = "Tập đoàn công nghệ Apple vừa ra mắt iPhone 16 với nhiều cải tiến về camera và trí tuệ nhân tạo. Sự kiện thu hút sự chú ý lớn từ giới mộ điệu trên toàn thế giới. Giá khởi điểm từ 799 USD."

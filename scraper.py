@@ -3,10 +3,10 @@ from newspaper import Article
 
 def scrape_article(url):
     """
-    Tải và phân tích bài báo từ URL.
-    Trả về dict chứa title, text và top_image.
+    Download and parse article from URL.
+    Returns a dict containing title, text, and top_image.
     """
-    print(f"[*] Đang tải nội dung từ: {url}")
+    print(f"Downloading content from: {url}")
     try:
         article = Article(url, language='vi')
         article.download()
@@ -19,14 +19,14 @@ def scrape_article(url):
             "authors": article.authors,
             "publish_date": article.publish_date
         }
-        print("[+] Tải bài báo thành công.")
+        print("Article downloaded successfully.")
         return data
     except Exception as e:
-        print(f"[-] Lỗi khi tải bài báo: {e}")
+        print(f"Error downloading article: {e}")
         return None
 
 if __name__ == "__main__":
-    # Test thử với một link bài báo
+    # Test with an article URL
     test_url = "https://vnexpress.net/thu-tuong-keu-goi-doanh-nghiep-my-dau-tu-vao-viet-nam-4654946.html"
     data = scrape_article(test_url)
     if data:

@@ -4,7 +4,7 @@ import os
 
 def download_image(url, output_path):
     """
-    Tải ảnh từ URL tĩnh.
+    Download image from a static URL.
     """
     try:
         response = requests.get(url, stream=True)
@@ -14,24 +14,24 @@ def download_image(url, output_path):
                 f.write(chunk)
         return True
     except Exception as e:
-        print(f"[-] Lỗi khi tải ảnh {url}: {e}")
+        print(f"Error downloading image {url}: {e}")
         return False
 
 def generate_ai_image(prompt, output_path):
     """
-    Tạo ảnh bằng AI miễn phí từ pollinations.ai
-    Tỷ lệ 9:16 (1080x1920)
+    Generate image using free AI from pollinations.ai
+    Aspect ratio 9:16 (1080x1920)
     """
-    print(f"[*] Đang tạo ảnh AI cho prompt: '{prompt}'")
-    # Thêm thông tin style để ảnh chuyên nghiệp hơn
+    print(f"Generating AI image for prompt: '{prompt}'")
+    # Add style information for professional look
     style_prompt = f"{prompt}, professional photography, high quality, highly detailed, vertical 9:16 format"
     encoded_prompt = urllib.parse.quote(style_prompt)
     
-    # Kích thước dọc
+    # Vertical resolution
     width = 1080
     height = 1920
     
-    # URL pollinations (nologo=true để bỏ logo)
+    # Pollinations URL (nologo=true to remove watermark)
     url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width={width}&height={height}&nologo=true"
     
     return download_image(url, output_path)
